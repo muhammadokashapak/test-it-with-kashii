@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test It With Kashii</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="extension-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-group">
+        <div class="logo-badge">🛡️</div>
+        <div>
+          <div class="title">Test It With Kashii</div>
+          <div class="subtitle">Autonomous AI QA Copilot</div>
+        </div>
+      </div>
+      <span class="badge">Phase 0</span>
+    </header>
+
+    <!-- Target Tab Card -->
+    <div class="card target-card">
+      <div class="card-label">ACTIVE TARGET URL</div>
+      <div class="target-url" id="targetUrl">Detecting active tab...</div>
+    </div>
+
+    <!-- Platform Topology Status -->
+    <div class="card">
+      <div class="card-header-row">
+        <div class="card-label">PLATFORM WORKER TOPOLOGY</div>
+        <button id="refreshBtn" class="btn-refresh" title="Probe status">↻ Refresh</button>
+      </div>
+      <div class="status-grid">
+        <div class="status-pill" id="pillApi">
+          <span class="dot"></span> API :8000
+        </div>
+        <div class="status-pill" id="pillEngine">
+          <span class="dot"></span> Engine :8001
+        </div>
+        <div class="status-pill" id="pillBrowser">
+          <span class="dot"></span> Worker :8002
+        </div>
+        <div class="status-pill" id="pillAi">
+          <span class="dot"></span> AI :8003
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions">
+      <button id="scanDomBtn" class="btn btn-secondary">
+        🔍 Scan Tab DOM & Elements
+      </button>
+      <button id="triggerRunBtn" class="btn btn-primary">
+        ⚡ Trigger Autonomous Test Run
+      </button>
+      <button id="openDashboardBtn" class="btn btn-ghost">
+        ↗ Open Next.js Dashboard (:3000)
+      </button>
+    </div>
+
+    <!-- Live Execution & Scan Output Area -->
+    <div class="output-container" id="outputArea" style="display: none;">
+      <div class="output-title" id="outputTitle">Results</div>
+      <pre class="output-content" id="outputContent"></pre>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      Kashii: Observe → Plan → Act → Verify → Report
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
