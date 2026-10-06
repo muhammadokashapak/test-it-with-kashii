@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://test-it-with-kashii.internal/schemas/agent-tool.schema.json",
+  "title": "AgentToolContract",
+  "type": "object",
+  "required": ["request_id", "tool", "arguments"],
+  "properties": {
+    "request_id": { "type": "string", "format": "uuid" },
+    "tool": {
+      "type": "string",
+      "enum": [
+        "browser.navigate",
+        "browser.click",
+        "browser.fill",
+        "browser.type",
+        "browser.select",
+        "browser.check",
+        "browser.uncheck",
+        "browser.hover",
+        "browser.scroll",
+        "browser.press",
+        "browser.wait",
+        "browser.upload",
+        "browser.download",
+        "browser.snapshot",
+        "browser.dom",
+        "browser.accessibility_snapshot",
+        "browser.network",
+        "browser.console",
+        "browser.current_state"
+      ]
+    },
+    "arguments": { "type": "object" },
+    "context": { "type": "object" },
+    "policy_context": {
+      "type": "object",
+      "properties": {
+        "allowed_domains": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "max_risk_level": { "type": "string" },
+        "allow_destructive": { "type": "boolean", "default": false }
+      }
+    }
+  }
+}

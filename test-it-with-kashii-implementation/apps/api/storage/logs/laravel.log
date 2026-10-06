@@ -1,0 +1,17 @@
+[2026-10-06 18:06:01] production.ERROR: Command "test" is not defined.
+
+Did you mean one of these?
+    make:test
+    schedule:test {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"test\" is not defined.
+
+Did you mean one of these?
+    make:test
+    schedule:test at O:/Projects/test-it-with-kashii/test-it-with-kashii-implementation/apps/api/vendor/symfony/console/Application.php:759)
+[stacktrace]
+#0 O:/Projects/test-it-with-kashii/test-it-with-kashii-implementation/apps/api/vendor/symfony/console/Application.php(298): Symfony/Component/Console/Application->find('test')
+#1 O:/Projects/test-it-with-kashii/test-it-with-kashii-implementation/apps/api/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#2 O:/Projects/test-it-with-kashii/test-it-with-kashii-implementation/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#3 O:/Projects/test-it-with-kashii/test-it-with-kashii-implementation/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#4 O:/Projects/test-it-with-kashii/test-it-with-kashii-implementation/apps/api/artisan(13): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
+#5 {main}
+"} 

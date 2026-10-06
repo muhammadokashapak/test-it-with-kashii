@@ -1,0 +1,14 @@
+{
+  "name": "@kashii/logger",
+  "version": "0.1.0",
+  "description": "Standardized structured JSON logger for Test It With Kashii",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "npx -y typescript"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "license": "UNLICENSED"
+}

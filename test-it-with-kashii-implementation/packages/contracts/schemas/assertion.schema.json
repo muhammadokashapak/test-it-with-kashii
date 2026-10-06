@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://test-it-with-kashii.internal/schemas/assertion.schema.json",
+  "title": "AssertionContract",
+  "type": "object",
+  "required": ["id", "run_id", "assertion_type", "status", "created_at"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "run_id": { "type": "string", "format": "uuid" },
+    "action_id": { "type": ["string", "null"], "format": "uuid" },
+    "scenario_id": { "type": ["string", "null"], "format": "uuid" },
+    "assertion_type": {
+      "type": "string",
+      "enum": [
+        "element_exists",
+        "element_visible",
+        "text_matches",
+        "url_matches",
+        "navigation_succeeds",
+        "api_status",
+        "response_schema",
+        "download_exists",
+        "file_contents",
+        "state_changed"
+      ]
+    },
+    "expected": { "type": "object" },
+    "actual": { "type": "object" },
+    "status": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "SKIPPED"]
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": { "type": "string", "format": "uuid" }
+    },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

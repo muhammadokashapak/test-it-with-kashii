@@ -1,0 +1,13 @@
+{
+  "name": "@kashii/contracts",
+  "version": "0.1.0",
+  "description": "Shared JSON Schemas and API/worker contracts for Test It With Kashii",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": ["testing", "ai", "contracts", "schemas"],
+  "author": "Kashii Team",
+  "license": "UNLICENSED"
+}

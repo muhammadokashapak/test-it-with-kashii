@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://test-it-with-kashii.internal/schemas/test-run.schema.json",
+  "title": "TestRunContract",
+  "type": "object",
+  "required": ["id", "project_id", "environment_id", "status", "created_at"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "project_id": { "type": "string", "format": "uuid" },
+    "environment_id": { "type": "string", "format": "uuid" },
+    "suite_id": { "type": ["string", "null"], "format": "uuid" },
+    "configuration_id": { "type": ["string", "null"], "format": "uuid" },
+    "configuration": { "type": "object" },
+    "status": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "INITIALIZING",
+        "ENVIRONMENT_CHECK",
+        "DISCOVERING",
+        "PLANNING",
+        "EXECUTING",
+        "VERIFYING",
+        "ANALYZING",
+        "REPORTING",
+        "COMPLETED",
+        "FAILED",
+        "BLOCKED",
+        "CANCELLED",
+        "TIMEOUT",
+        "PAUSED"
+      ]
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "max_duration_seconds": { "type": "integer", "default": 600 },
+        "max_pages": { "type": "integer", "default": 50 },
+        "max_actions": { "type": "integer", "default": 200 },
+        "max_ai_calls": { "type": "integer", "default": 100 }
+      }
+    },
+    "failure_reason": { "type": ["string", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "started_at": { "type": ["string", "null"], "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" }
+  }
+}

@@ -1,0 +1,89 @@
+name: Kashii Monorepo CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test-packages:
+    name: Build & Test Shared Contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build shared packages
+        run: npm run build
+
+      - name: Test contracts & types
+        run: npm run test
+
+  test-laravel-api:
+    name: Test Laravel API
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, sqlite3, pdo_sqlite, pdo_pgsql
+          coverage: none
+
+      - name: Install Composer dependencies
+        working-directory: apps/api
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Run PHPUnit Tests
+        working-directory: apps/api
+        run: php vendor/phpunit/phpunit/phpunit
+
+  test-python-services:
+    name: Test Python Services
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install test requirements
+        run: |
+          pip install pytest fastapi uvicorn pydantic
+
+      - name: Test Kashii Engine
+        env:
+          PYTHONPATH: services/kashii-engine/src
+        run: pytest services/kashii-engine/tests
+
+      - name: Test Browser Worker
+        env:
+          PYTHONPATH: services/browser-worker/src
+        run: pytest services/browser-worker/tests
+
+      - name: Test AI Gateway
+        env:
+          PYTHONPATH: services/ai-gateway/src
+        run: pytest services/ai-gateway/tests
+
+  docker-compose-validate:
+    name: Validate Docker Compose Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Docker Compose config
+        run: docker compose config

@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"Tests\\Feature\\HealthTest::test_api_ping_returns_pong":0.044,"Tests\\Feature\\HealthTest::test_api_status_returns_operational":0.002,"Tests\\Feature\\HealthTest::test_api_health_endpoint":0.02}}

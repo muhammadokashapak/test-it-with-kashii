@@ -1,0 +1,14 @@
+{
+  "name": "@kashii/events",
+  "version": "0.1.0",
+  "description": "Standard event names and contracts for Test It With Kashii",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "npx -y typescript"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "license": "UNLICENSED"
+}

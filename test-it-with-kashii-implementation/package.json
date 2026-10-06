@@ -1,0 +1,26 @@
+{
+  "name": "test-it-with-kashii",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Test It With Kashii — Autonomous AI QA/Testing Platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:packages": "npm run build --workspaces --if-present",
+    "build": "npm run build:packages",
+    "test:contracts": "node packages/contracts/index.js",
+    "test:types": "npm run test --prefix packages/shared-types",
+    "test": "npm run test:contracts && npm run test:types",
+    "health": "node scripts/health-check.js"
+  },
+  "keywords": [
+    "autonomous-testing",
+    "qa",
+    "ai-agent",
+    "playwright"
+  ],
+  "author": "Kashii Team",
+  "license": "UNLICENSED"
+}

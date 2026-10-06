@@ -1,0 +1,179 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kashii-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-kashii}
+      POSTGRES_USER: ${POSTGRES_USER:-kashii}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kashii} -d ${POSTGRES_DB:-kashii}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kashii_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: kashii-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kashii_network
+
+  minio:
+    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
+    container_name: kashii-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-kashii_admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-kashii_secret_key}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kashii_network
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: kashii-api
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_KEY: ${APP_KEY:-base64:4Z87d1vQW4q92KqM+tL8r2rV4wB7yX1tP0q2r3s4t5u=}
+      APP_URL: ${API_URL:-http://localhost:8000}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-kashii}
+      DB_USERNAME: ${POSTGRES_USER:-kashii}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      AWS_ENDPOINT: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-kashii_admin}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-kashii_secret_key}
+      AWS_BUCKET: kashii-artifacts
+      AWS_USE_PATH_STYLE_ENDPOINT: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    ports:
+      - "${API_PORT:-8000}:8000"
+    networks:
+      - kashii_network
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: kashii-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${API_URL:-http://localhost:8000}
+      NODE_ENV: production
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    networks:
+      - kashii_network
+
+  kashii-engine:
+    build:
+      context: ./services/kashii-engine
+      dockerfile: Dockerfile
+    container_name: kashii-engine
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      API_URL: http://api:8000
+      BROWSER_WORKER_URL: http://browser-worker:8002
+      AI_GATEWAY_URL: http://ai-gateway:8003
+    depends_on:
+      redis:
+        condition: service_healthy
+      browser-worker:
+        condition: service_started
+    ports:
+      - "${ENGINE_PORT:-8001}:8001"
+    networks:
+      - kashii_network
+
+  browser-worker:
+    build:
+      context: ./services/browser-worker
+      dockerfile: Dockerfile
+    container_name: kashii-browser-worker
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      BROWSER_ALLOWED_DOMAINS: ${BROWSER_ALLOWED_DOMAINS:-localhost,127.0.0.1,web,api}
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "${BROWSER_WORKER_PORT:-8002}:8002"
+    networks:
+      - kashii_network
+
+  ai-gateway:
+    build:
+      context: ./services/ai-gateway
+      dockerfile: Dockerfile
+    container_name: kashii-ai-gateway
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      AI_PROVIDER: ${AI_PROVIDER:-mock}
+      AI_MODEL: ${AI_MODEL:-mock-reasoner}
+      AI_API_KEY: ${AI_API_KEY:-}
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "${AI_GATEWAY_PORT:-8003}:8003"
+    networks:
+      - kashii_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+
+networks:
+  kashii_network:
+    driver: bridge
